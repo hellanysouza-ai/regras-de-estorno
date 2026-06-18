@@ -206,6 +206,30 @@
     .info-banner { padding: 16px 18px; gap: 10px; }
     .info-banner p { font-size: 12px; }
   }
+  /* EXPORT BUTTON */
+  .export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s;
+    white-space: nowrap;
+  }
+  .export-btn:hover { background: var(--purple-light); box-shadow: 0 3px 10px rgba(107,45,107,.25); }
+  .export-btn svg { flex-shrink: 0; }
+  @media (max-width: 600px) {
+    .export-btn span { display: none; }
+    .export-btn { padding: 9px 12px; }
+  }
+
   @media print {
     .search-bar { display: none; }
     .section { break-inside: avoid; }
@@ -232,6 +256,10 @@
       <input type="text" id="search" placeholder="Buscar operadora…" oninput="filterAll()" autocomplete="off">
     </div>
     <span id="count-label"></span>
+    <button class="export-btn" onclick="exportPDF()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Exportar PDF</span>
+    </button>
   </div>
 </div>
 
@@ -247,6 +275,7 @@
   <div class="section-body">
     <table class="rule-table"><thead><tr><th>Faturas pagas ao cancelar</th><th>Estorno do agenciamento</th></tr></thead><tbody>
       <tr><td>1ª fatura paga</td><td><span class="pct pct-high">80%</span> do total do agenciamento pago</td></tr>
+      <tr><td>1ª e 2ª faturas pagas</td><td><span class="pct pct-high">70%</span> do total do agenciamento pago</td></tr>
       <tr><td>1ª à 3ª faturas pagas</td><td><span class="pct pct-mid">60%</span> do total do agenciamento pago</td></tr>
       <tr><td>1ª à 4ª faturas pagas</td><td><span class="pct pct-mid">50%</span> do total do agenciamento pago</td></tr>
       <tr><td>1ª à 5ª faturas pagas</td><td><span class="pct pct-low">40%</span> do total do agenciamento pago</td></tr>
@@ -802,7 +831,7 @@
 <div class="info-banner">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
   <p><strong>Informativo sobre Regras de Estornos</strong><br>
-  As regras de estornos são aplicadas diretamente pelas operadoras. Em algumas situações, somente tomamos conhecimento desses estornos quando são refletidos nos relatórios recebidos.</p>
+  As regras de estornos são aplicadas diretamente pelas operadoras. Em algumas situações, somente tomamos conhecimento desses estornos quando são refletidos nos relatórios recebidos. Poderá ocorrer alterações sem aviso prévio.</p>
 </div>
 </main>
 
@@ -825,6 +854,21 @@
     else { nr.style.display = 'none'; }
   }
   filterAll();
+
+  function exportPDF() {
+    const sections = document.querySelectorAll('.section');
+    const wasOpen = [];
+    sections.forEach(function(s, i) {
+      wasOpen[i] = s.classList.contains('open');
+      s.classList.add('open');
+    });
+    window.print();
+    setTimeout(function() {
+      sections.forEach(function(s, i) {
+        if (!wasOpen[i]) s.classList.remove('open');
+      });
+    }, 1500);
+  }
 </script>
 </body>
 </html>
